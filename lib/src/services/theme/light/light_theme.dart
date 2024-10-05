@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import '../extensions/colors_theme.dart';
 
 const _theme = Colors.white;
-const _text = Colors.white;
 const _opposite = Colors.black;
+
+const _text = Colors.black;
+const _secondaryText = Colors.grey;
+const _background = Color.fromARGB(255, 196, 194, 194);
+
 const _mainAccent = Color(0xFFFE9901);
 const _primaryColor = Color(0xFF00BF6D);
 const _primaryAccent = Color(0xFF1D1D35);
@@ -18,10 +22,19 @@ final lightTheme = ThemeData.light(useMaterial3: false).copyWith(
   primaryColor: _primaryColor,
   scaffoldBackgroundColor: Colors.white,
   iconTheme: const IconThemeData(color: _primaryAccent),
-  textTheme: GoogleFonts.interTextTheme().apply(
-    bodyColor: _primaryAccent,
-    displayColor: _text,
-  ),
+  textTheme: GoogleFonts.interTextTheme()
+      .apply(
+        bodyColor: _text,
+        displayColor: _text,
+      )
+      .copyWith(
+        titleLarge: GoogleFonts.merriweather(color: _theme),
+        bodyLarge: GoogleFonts.notoSerif(
+          fontSize: 18,
+          color: _text,
+          fontWeight: FontWeight.normal,
+        ),
+      ),
   colorScheme: const ColorScheme.light(
     primary: _primaryColor,
     secondary: _mainAccent,
@@ -39,6 +52,11 @@ final lightTheme = ThemeData.light(useMaterial3: false).copyWith(
       text: _text,
       theme: _theme,
       opposite: _opposite,
+//
+      background: _background,
+      secondaryText: _secondaryText,
+//
+
       primary: _primaryColor,
       accent: _mainAccent,
       errorState: _errorColor,

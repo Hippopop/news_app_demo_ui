@@ -3,4 +3,5 @@ const _imageDir = "$_rootDir/images";
 
 final class AppImages {
   static const profileImage = "$_imageDir/profile_image.jpg";
+  static const emptyImage = "$_imageDir/empty_placeholder.jpg";
 }
