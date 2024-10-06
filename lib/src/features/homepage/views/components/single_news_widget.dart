@@ -178,8 +178,8 @@ class SingleNewsWidget extends StatelessWidget {
   }
 }
 
-class SingleNewsShimmerWidget extends StatelessWidget {
-  const SingleNewsShimmerWidget({
+class SingleNewsShimmer extends StatelessWidget {
+  const SingleNewsShimmer({
     super.key,
   });
 
@@ -283,41 +283,13 @@ class SingleNewsShimmerWidget extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        _SkeletonGreyBox(
-                                          height: 20,
-                                          width: (constraints.maxWidth),
-                                        ),
-                                        const SizedBox(height: 8),
+                                        for (int i = 0; i < 6; i++) ...[
+                                          _SkeletonGreyBox(
+                                            height: 20,
+                                            width: (constraints.maxWidth),
+                                          ),
+                                          const SizedBox(height: 8)
+                                        ],
                                         _SkeletonGreyBox(
                                           height: 20,
                                           width:

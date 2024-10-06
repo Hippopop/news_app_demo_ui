@@ -88,8 +88,8 @@ class PinnedNewsWidget extends StatelessWidget {
   }
 }
 
-class PinnedNewsWidgetShimmer extends StatelessWidget {
-  const PinnedNewsWidgetShimmer({
+class PinnedNewsShimmer extends StatelessWidget {
+  const PinnedNewsShimmer({
     super.key,
   });
 
