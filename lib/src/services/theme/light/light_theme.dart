@@ -9,9 +9,9 @@ const _opposite = Colors.black;
 const _text = Colors.black;
 const _secondaryText = Colors.grey;
 const _background = Color.fromARGB(255, 196, 194, 194);
+const _primaryColor = Colors.black;
 
 const _mainAccent = Color(0xFFFE9901);
-const _primaryColor = Color(0xFF00BF6D);
 const _primaryAccent = Color(0xFF1D1D35);
 const _secondaryAccent = Color(0xFF1D1D35);
 
@@ -29,6 +29,7 @@ final lightTheme = ThemeData.light(useMaterial3: false).copyWith(
       )
       .copyWith(
         titleLarge: GoogleFonts.merriweather(color: _theme),
+        titleMedium: GoogleFonts.merriweather(color: _text),
         bodyLarge: GoogleFonts.notoSerif(
           fontSize: 18,
           color: _text,
