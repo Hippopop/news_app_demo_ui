@@ -1,12 +1,13 @@
-import 'dart:ui';
-
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_custom_carousel/flutter_custom_carousel.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app_demo/src/constants/assets/app_assets.dart';
 import 'package:news_app_demo/src/constants/components/border_radius.dart';
 import 'package:news_app_demo/src/constants/components/paddings.dart';
+import 'package:news_app_demo/src/providers/category_data_provider/category_data_provider.dart';
 import 'package:news_app_demo/src/services/theme/app_theme.dart';
 
 class DrawerPage extends StatelessWidget {
@@ -28,12 +29,21 @@ class DrawerPage extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: Image.asset(AppImages.appLogo),
+                      child: Center(
+                        child: SizedBox(
+                          width: MediaQuery.sizeOf(context).width * 0.6,
+                          child: Image.asset(
+                            AppImages.appLogo,
+                            colorBlendMode: BlendMode.dst,
+                          ),
+                        ),
+                      ),
                     ),
-                    const Expanded(
+                    Expanded(
                       flex: 3,
                       child: Material(
-                        child: SingleChildScrollView(
+                        color: context.color.theme,
+                        child: const SingleChildScrollView(
                           child: Column(
                             children: [
                               DrawerNavTile(
@@ -119,109 +129,143 @@ class AnimatedCategorySection extends StatefulWidget {
 }
 
 class _AnimatedCategorySectionState extends State<AnimatedCategorySection> {
-  late final controller = PageController();
+  late final newsPageController = PageController();
+  late final categoryPageController = CustomCarouselScrollController();
 
   @override
   void dispose() {
-    controller.dispose();
+    newsPageController.dispose();
+    categoryPageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final categoryOptionList = [
-      "All",
-      "Trending",
-      "Reels",
-      "Business",
-      "Insight",
-      "Albums",
-      "Fashion",
-      "Sports",
-      "Politics"
-    ];
-    return Column(
-      children: [
-        SizedBox(
-          height: 120,
-          child: ClipRRect(
-            child: CustomCarousel(
-              tapToSelect: true,
-              itemCountAfter: 2,
-              itemCountBefore: 2,
-              alignment: Alignment.center,
-              scrollDirection: Axis.horizontal,
-              onSelectedItemChanged: (value) {
-                controller.animateToPage(
-                  value,
-                  curve: Curves.linear,
-                  duration: Durations.medium1,
-                );
-              },
-              effectsBuilder: (index, scrollRatio, child) {
-                double scale(double x) {
-                  if (x < -0.3 || x > 0.3) {
+    return Consumer(builder: (context, ref, child) {
+      final categoryData = ref.watch(categoryDataProvider);
+      return Column(
+        children: [
+          SizedBox(
+            height: 120,
+            child: ClipRRect(
+              child: CustomCarousel(
+                tapToSelect: true,
+                itemCountAfter: 2,
+                itemCountBefore: 2,
+                alignment: Alignment.center,
+                scrollDirection: Axis.horizontal,
+                controller: categoryPageController,
+                onSelectedItemChanged: (value) {
+                  newsPageController.animateToPage(
+                    value,
+                    curve: Curves.linear,
+                    duration: Durations.medium1,
+                  );
+                },
+                effectsBuilder: (index, scrollRatio, child) {
+                  double scale(double x) {
+                    if (x < -0.3 || x > 0.3) {
+                      return 0.0;
+                    } else if (-0.3 <= x && x <= 0) {
+                      return (x + 0.3) / 0.3;
+                    } else if (0 < x && x <= 0.3) {
+                      return 1 - (x / 0.3);
+                    }
                     return 0.0;
-                  } else if (-0.3 <= x && x <= 0) {
-                    return (x + 0.3) / 0.3;
-                  } else if (0 < x && x <= 0.3) {
-                    return 1 - (x / 0.3);
                   }
-                  return 0.0;
-                }
 
-                final catalyst = scale(scrollRatio);
-                return Transform.scale(
-                  scale: 1 - (0.3 * (1 - catalyst)),
-                  child: Transform.translate(
-                    offset: Offset(scrollRatio * 130 * 3, 0),
-                    child: ImageFiltered(
-                      enabled: catalyst == 1,
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: catalyst,
-                        sigmaY: catalyst,
-                      ),
+                  final catalyst = scale(scrollRatio);
+                  return Transform.scale(
+                    scale: 1 - (0.3 * (1 - catalyst)),
+                    child: Transform.translate(
+                      offset: Offset(scrollRatio * 130 * 3, 0),
                       child: Opacity(
                         opacity: (catalyst + 0.55).clamp(0, 1),
                         child: child,
                       ),
                     ),
+                  );
+                },
+                children: categoryData.when(
+                  data: (data) => data
+                      .map(
+                        (e) => CategoryImageItem(
+                          name: e.title,
+                          imagePath: e.imageLink,
+                        ),
+                      )
+                      .toList(),
+                  error: (error, stackTrace) {
+                    log("Error", error: error, stackTrace: stackTrace);
+                    return List.generate(
+                      8,
+                      (index) => const CategoryImageItemShimmer(),
+                    );
+                  },
+                  loading: () => List.generate(
+                    8,
+                    (index) => const CategoryImageItemShimmer(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: categoryData.when(
+              data: (data) {
+                return PageView.builder(
+                  itemCount: data.length,
+                  controller: newsPageController,
+                  onPageChanged: (value) {
+                    if (categoryPageController.selectedItem != value) {
+                      categoryPageController.animateToItem(value);
+                    }
+                  },
+                  itemBuilder: (context, index) => ListView.separated(
+                    itemCount: data[index].newsList.length,
+                    padding: emptyPadding,
+                    separatorBuilder: (context, index) => Divider(
+                      color: context.color.secondaryText,
+                    ),
+                    itemBuilder: (context, i) => SingleNewsListTile(
+                      title: data[index].newsList[i].title,
+                      image: data[index].newsList[i].imageLink,
+                    ),
                   ),
                 );
               },
-              children: List.generate(
-                categoryOptionList.length,
-                (index) => const CategoryImageItemShimmer(
-                    // name: categoryOptionList[index],
-                    // imagePath:
-                    //     "https://images.unsplash.com/photo-1698594691245-404a02bb00a3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aW50ZXJuYXRpb25hbHxlbnwwfDF8MHx8fDI%3D",
-                    ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: PageView.builder(
-            controller: controller,
-            itemCount: categoryOptionList.length,
-            itemBuilder: (context, index) => ListView.separated(
-              itemCount: 40,
-              padding: emptyPadding,
-              separatorBuilder: (context, index) => Divider(
-                color: context.color.secondaryText,
-              ),
-              itemBuilder: (context, index) => const SingleNewsListTileShimmer(
-                  // title:
-                  //     "কোটা সংস্কারের দাবিতে বঙ্গভবনে স্মারকলিপি দিলেন শিক্ষার্থীরা",
-                  // image:
-                  //     "https://images.unsplash.com/photo-1698594691245-404a02bb00a3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aW50ZXJuYXRpb25hbHxlbnwwfDF8MHx8fDI%3D",
+              error: (error, stackTrace) => PageView.builder(
+                controller: newsPageController,
+                itemCount: 8,
+                itemBuilder: (context, index) => ListView.separated(
+                  itemCount: 10,
+                  padding: emptyPadding,
+                  separatorBuilder: (context, index) => Divider(
+                    color: context.color.secondaryText,
                   ),
+                  itemBuilder: (context, index) =>
+                      const SingleNewsListTileShimmer(),
+                ),
+              ),
+              loading: () => PageView.builder(
+                controller: newsPageController,
+                itemCount: 8,
+                itemBuilder: (context, index) => ListView.separated(
+                  itemCount: 10,
+                  padding: emptyPadding,
+                  separatorBuilder: (context, index) => Divider(
+                    color: context.color.secondaryText,
+                  ),
+                  itemBuilder: (context, index) =>
+                      const SingleNewsListTileShimmer(),
+                ),
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
@@ -245,12 +289,14 @@ class SingleNewsListTile extends StatelessWidget {
       leading: ClipRRect(
         borderRadius: br8,
         child: ColoredBox(
-          color: Colors.green,
+          color: context.color.secondaryText,
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: CachedNetworkImage(
-              fit: BoxFit.cover,
               imageUrl: image,
+              fit: BoxFit.cover,
+              errorWidget: (context, url, error) =>
+                  Image.asset(AppImages.emptyImage),
             ),
           ),
         ),
@@ -335,6 +381,8 @@ class CategoryImageItem extends StatelessWidget {
               child: CachedNetworkImage(
                 fit: BoxFit.cover,
                 imageUrl: imagePath,
+                errorWidget: (context, url, error) =>
+                    Image.asset(AppImages.emptyImage),
               ),
             ),
           ),

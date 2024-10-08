@@ -43,8 +43,11 @@ class SingleNewsWidget extends StatelessWidget {
                   children: [
                     SizedBox.expand(
                       child: CachedNetworkImage(
-                        fit: BoxFit.cover,
                         imageUrl: image,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Image.asset(
+                          AppImages.emptyImage,
+                        ),
                       ),
                     ),
                     const DecoratedBox(
@@ -79,7 +82,6 @@ class SingleNewsWidget extends StatelessWidget {
                     child: Text(
                       title,
                       style: context.textTheme.headlineSmall?.copyWith(
-                        color: context.color.theme,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -127,6 +129,9 @@ class SingleNewsWidget extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   desc,
+                                  maxLines: 10,
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
                                   style: context.textTheme.bodyLarge,
                                 ),
                               ),
@@ -161,7 +166,7 @@ class SingleNewsWidget extends StatelessWidget {
                               "Daily Topper",
                               style: context.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: context.color.secondaryText,
+                                color: Colors.grey,
                               ),
                             ),
                           ),

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../extensions/colors_theme.dart';
 
 const _theme = Colors.white;
+const _titleColor = Colors.white;
 const _opposite = Colors.black;
 
 const _text = Colors.black;
@@ -28,6 +29,7 @@ final lightTheme = ThemeData.light(useMaterial3: false).copyWith(
         displayColor: _text,
       )
       .copyWith(
+        headlineSmall: const TextStyle(color: _titleColor),
         titleLarge: GoogleFonts.merriweather(color: _theme),
         titleMedium: GoogleFonts.merriweather(color: _text),
         bodyLarge: GoogleFonts.notoSerif(

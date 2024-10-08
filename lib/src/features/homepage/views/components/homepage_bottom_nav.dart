@@ -20,6 +20,7 @@ class HomepageBottomNav extends StatelessWidget {
       showUnselectedLabels: false,
       type: BottomNavigationBarType.fixed,
       currentIndex: selectedIndex,
+      backgroundColor: context.color.theme,
       onTap: onIndexChange,
       items: [
         const BottomNavigationBarItem(

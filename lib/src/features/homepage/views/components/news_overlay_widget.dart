@@ -143,6 +143,7 @@ class SingleOverlayButton extends StatelessWidget {
       child: Column(
         children: [
           Material(
+            color: context.color.theme,
             child: InkWell(
               onTap: () {},
               borderRadius: br12,
