@@ -45,3 +45,4 @@ Here is some example of how this simple app looks -
 | <img width="300" alt="Screenshot One" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.15.19.png">  | <img width="300" alt="Screenshot Two" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.10.36.png">  | <img width="300" alt="Screenshot Three" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.10.45.png"> |
 | <img width="300" alt="Screenshot Four" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.11.51.png"> | <img width="300" alt="Screenshot Five" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.11.57.png"> |  <img width="300" alt="Screenshot Six" src="./screenshots/Simulator Screenshot - iPhone 16 Plus - 2024-10-08 at 14.12.02.png">  |
 
+You can find few more in the `screenshots` directory. Thank youu! 💙
